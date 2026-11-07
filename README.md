@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Toxinityy/bara-uiux/a6bc158609ce9036872a8e2c4eb42ed8a8e2ce2d/public/logo/bara_firelike.png" alt="BARA wordmark and flame emblem" width="360" />
+<img src="assets/bara-banner.png" alt="BARA wordmark and flame emblem" width="360" />
 
 # BARA
 
