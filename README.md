@@ -15,7 +15,7 @@ See what people reported, where the evidence came from, and what remains unknown
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![MapLibre GL JS](https://img.shields.io/badge/MapLibre_GL_JS-Observation_maps-E95B14?style=flat-square)
 
-[Why BARA](#why-bara) · [Try the demo](#try-the-demo) · [Architecture](#architecture) · [Quickstart](#quickstart) · [Repositories](#repositories)
+[Why BARA](#why-bara) · [Try the demo](#try-the-demo) · [Architecture](#architecture) · [Quickstart](#quickstart) · [Backend setup](#backend-setup) · [Repositories](#repositories)
 
 </div>
 
@@ -37,7 +37,7 @@ After starting the app, open one of these routes:
 | Intelligence · Normal | [`/intelligence`](http://localhost:3000/intelligence) | Filter captures by session or time and expand individual photo findings. |
 | Intelligence · Pro | [`/intelligence?mode=pro`](http://localhost:3000/intelligence?mode=pro) | On a tablet or desktop, inspect session checklists, follow evidence back to a capture, or compare two captures. |
 
-> Intelligence uses bundled synthetic data from Central Kalimantan. Map points mark observation positions. The source of the fire may be unknown.
+Start with the **8-capture preview** to inspect sample photo findings and session checklists. Switch to the **72-capture map scenario** under **Data settings** to explore spatial patterns. Both datasets are synthetic and set in Central Kalimantan. Map points mark where observations were made.
 
 ## Architecture
 
@@ -50,8 +50,9 @@ flowchart LR
         I --> M["Observation map · MapLibre"]
     end
     subgraph BE["backend/"]
-        B["NestJS API for sessions and image analysis"]
-        B --> S["MongoDB and MinIO storage"]
+        B["NestJS API"]
+        B -->|Sessions and analysis results| DB[("MongoDB")]
+        B -->|Capture images| S[("MinIO")]
     end
     I -.->|Planned API integration| B
 ```
@@ -83,6 +84,33 @@ npm run build
 
 </details>
 
+## Backend setup
+
+Use Docker Compose to run the API and its storage services. From the BARA root, create the local configuration files on first setup:
+
+```sh
+cp backend/infrastructure/.env.example backend/infrastructure/.env
+cp backend/bara-api/.env.example backend/bara-api/.env
+```
+
+Set the credentials in the infrastructure `.env`, then use the same MongoDB application credentials and MinIO credentials in the API `.env`. Set `OPENAI_API_KEY` in the API `.env` to enable model analysis.
+
+```sh
+(cd backend/infrastructure && docker compose up -d --build)
+(cd backend/infrastructure && docker compose ps -a)
+```
+
+Once MongoDB and MinIO are healthy and `minio-init` has exited successfully, start the API and check that it can list sessions:
+
+```sh
+(cd backend/bara-api && docker compose up -d --build)
+curl --fail http://localhost:3000/sessions
+```
+
+The API uses port `3000`. To run the frontend alongside it, start the frontend with `npm run dev -- --port 3001` from `frontend/` and open [localhost:3001](http://localhost:3001). Intelligence uses its bundled sample data in this checkout.
+
+See the [backend setup guide](https://github.com/miroslavmatthew/BARAbackend/blob/main/README.md) for development commands and the [API contract](https://github.com/miroslavmatthew/BARAbackend/blob/main/UI-BACKEND-HANDOFF.md) for session and snapshot endpoints.
+
 ## Repositories
 
 | Path | Repository | Role |
@@ -90,7 +118,7 @@ npm run build
 | `frontend/` | [bara-uiux · main](https://github.com/Toxinityy/bara-uiux/tree/main) | Landing page and Intelligence workspace |
 | `backend/` | [BARAbackend · main](https://github.com/miroslavmatthew/BARAbackend/tree/main) | NestJS API, storage infrastructure, and integration docs |
 
-The folder links on GitHub open the commits pinned by BARA. The links in this table open the branches directly. See the [backend setup guide](https://github.com/miroslavmatthew/BARAbackend/blob/main/README.md) to run the API and storage services.
+The folder links on GitHub open the commits pinned by BARA. The links in this table open the branches directly.
 
 The frontend handoff describes how Intelligence maps its sample data to the backend contract. [Read the UI alignment notes](https://github.com/Toxinityy/bara-uiux/blob/main/docs/backend-ui-alignment.md).
 
