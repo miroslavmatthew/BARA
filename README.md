@@ -113,12 +113,16 @@ See the [backend setup guide](https://github.com/miroslavmatthew/BARAbackend/blo
 
 ## Repositories
 
-| Path | Repository | Role |
-| --- | --- | --- |
-| `frontend/` | [bara-uiux · main](https://github.com/Toxinityy/bara-uiux/tree/main) | Landing page and Intelligence workspace |
-| `backend/` | [BARAbackend · main](https://github.com/miroslavmatthew/BARAbackend/tree/main) | NestJS API, storage infrastructure, and integration docs |
+| Submodule | Role |
+| --- | --- |
+| [frontend/ on main](https://github.com/Toxinityy/bara-uiux/tree/main) | Landing page and Intelligence workspace |
+| [backend/ on main](https://github.com/miroslavmatthew/BARAbackend/tree/main) | NestJS API, storage infrastructure, and integration docs |
 
-The folder links on GitHub open the commits pinned by BARA. The links in this table open the branches directly.
+The links above open each repository's live `main` branch. GitHub's folder entries open the commits recorded by BARA. To check out the latest `main` for both submodules locally, run this from the BARA root:
+
+```sh
+git submodule update --init --remote -- backend frontend
+```
 
 The frontend handoff describes how Intelligence maps its sample data to the backend contract. [Read the UI alignment notes](https://github.com/Toxinityy/bara-uiux/blob/main/docs/backend-ui-alignment.md).
 
